@@ -1,18 +1,15 @@
 function createStore(state, stateChanger) {
-  //数据仓库管理中心
-  const getState = (state) => state; //数据获取
   const listeners = [];
-  const subScribe = (listener) => listeners.push(listener);
+  const subscribe = (listener) => listeners.push(listener);
+  const getState = () => state;
   const dispatch = (action) => {
-    stateChanger(action, state); //数据修改
+    stateChanger(action,state);
     listeners.forEach((listener) => listener());
   };
-
-  return { getState, dispatch,subScribe };
+  return { getState, subscribe, dispatch };
 }
 
 function renderApp(appState) {
-  debugger;
   renderTitle(appState.title);
   renderContent(appState.content);
 }
@@ -38,6 +35,7 @@ let appState = {
     color: "blue",
   },
 };
+
 function stateChanger(action, state) {
   //具体修改内容
   switch (action.type) {
@@ -51,7 +49,7 @@ function stateChanger(action, state) {
   }
 }
 const store = createStore(appState, stateChanger); //数据仓库构建
-store.subScribe(()=>renderApp(store.getState()))
+store.subscribe(() => renderApp(store.getState()));
 renderApp(store.getState()); // 首次渲染页面
 store.dispatch({ type: "UPDATE_TITLE_TEXT", text: "《React.js 小书》" }); // 修改标题文本
 store.dispatch({ type: "UPDATE_TITLE_COLOR", color: "blue" }); // 修改标题颜色
